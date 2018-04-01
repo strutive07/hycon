@@ -6,7 +6,7 @@ var router = express.Router();
 
 
 router.get('/', function(req, res, next) {
-    res.redirect('http://ssumon.com/');
+
 });
 
 module.exports = router;

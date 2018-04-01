@@ -39,9 +39,9 @@ const config = require('../config/config');
         }
     });
 
-router.get('/authenticate', (req, res) => {
-    res.redirect('/');
-});
+    router.get('/authenticate', (req, res) => {
+        res.redirect('/');
+    });
 
 
     router.post('/register', (req, res) => {
@@ -49,18 +49,15 @@ router.get('/authenticate', (req, res) => {
         var id = req.body.id;
         const password = req.body.password;
         const phone_number = req.body.phone_number;
-        var quest_size = req.body.quest_size;
         console.log('name : ' + name);
         console.log('id : ' + id);
         console.log('password : ' + password);
         console.log('phone_number : ' + phone_number);
-        console.log('quest_size : ' + quest_size);
         if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
             res.status(400).json({message: 'Invalid Request !'});
         } else {
 
             db.connectDB().then(register.RegisterUser(name, id, password, phone_number)
-                .then(result => user_quest_bool.register_user_quest_bool(id, quest_size))
                 .then(result => {
                     console.log('name->' + name);
                     console.log('email->' + id);

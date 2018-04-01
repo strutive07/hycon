@@ -22,14 +22,9 @@ exports.RegisterUser = (name, id, password, phone_number, first_connection) =>
                 auth_id : id,
                 hashed_password: hashed_password,
                 phone_number : phone_number,
-                score : 0,
-                is_elder : false,
-                quest_id : -1,
-                first_connection : first_connection,
+                point : 0,
                 first_login : false,
                 created_at : new Date(),
-                temp_random_string : undefined,
-                temp_temp_random_string_time : undefined,
                 temp_password : undefined,
                 temp_password_time : undefined
             });
