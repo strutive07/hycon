@@ -80,7 +80,7 @@ router.post('/wallet', (req, res) => {
         profile.GetProfile(req.body.wallet)
             .then(result => {
                 axios.get('http://localhost:2442/api/v1/wallet/' + req.body.wallet + '/balance')
-                    .then(response => res.json({name : result.name, wallet : result.wallet, balance : response.data.balance}))
+                    .then(response => res.json({name : result.name, wallet : result.wallet, balance : response.data.balance, entered_wallet : result.entered_wallet}))
                     .catch(err => console.log(err));
             })
             .catch(err => {console.log('err : ' + err);
