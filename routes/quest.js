@@ -169,6 +169,32 @@ router.post('/receive_coin', (req, res) => {
         .catch(err => console.log(err))
 });
 
+router.post('/get_random', (req, res) => {
+    var room_wallet = req.body.room_wallet;
+    db.connectDB().then(
+        quest_info.get_random(room_wallet)
+            .then(result => {
+                res.status(200).json(result);
+            })
+            .catch(err => {console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    )
+});
+
+router.post('/remove_random', (req, res) => {
+    var room_wallet = req.body.room_wallet;
+    db.connectDB().then(
+        quest_info.remove_random(room_wallet)
+            .then(result => {
+                res.status(200).json(result);
+            })
+            .catch(err => {console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    )
+});
+
 
 module.exports = router;
 

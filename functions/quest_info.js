@@ -69,3 +69,51 @@ exports.push_user = (user_json, server_wallet) =>
             .catch(err => {
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
+
+exports.get_random = (server_wallet) =>
+    new Promise((resolve, reject) => {
+        quest_info.find({server_wallet:server_wallet}).then(results =>{
+            var result = results[0];
+            if(result.selected_person.length === 0){
+
+                if(result.random_extracted_seed.length === result.members.length){
+                    result.random_extracted_seed = []
+                }
+
+                result.random_extracted_seed.sort();
+                var random = JSON.parse(JSON.stringify(result.members));
+                for(var i = 0; i<result.random_extracted_seed.length; i++){
+                    random.splice(result.random_extracted_seed[i]-i,1);
+                }
+                var random_item = random[Math.floor(Math.random() * random.length)];
+                var random_item_index = result.members.indexOf(random_item);
+                result.random_extracted_seed.push(random_item_index);
+                result.selected_person = random_item;
+                result.save();
+                return result.selected_person;
+            }else {
+                result.save();
+                return result.selected_person;
+            }
+            return result;
+        }).then(result => resolve(result))
+            .catch(err => {
+                reject({ status: 500, message: 'Internal Server Error !' })
+            })});
+
+exports.remove_random = (server_wallet) =>
+    new Promise((resolve, reject) => {
+        quest_info.find({server_wallet:server_wallet}).then(results =>{
+            var result = results[0];
+            if(result.selected_person.length === 0){
+                reject({ status: 500, message: 'Internal Server Error !' })
+            }else {
+                result.selected_person = "";
+                result.save();
+                return result;
+            }
+            return result;
+        }).then(result => resolve(result))
+            .catch(err => {
+                reject({ status: 500, message: 'Internal Server Error !' })
+            })});
