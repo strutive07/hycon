@@ -54,7 +54,7 @@ router.post('/create', (req, res) => {
                                 quest_info.create_quest(wallet_name, server_wallet, server_private_key,server_mnemonic, selected_person, opener, random_extracted_seed)
                                     .then(result => {
                                         login.PushUser(server_wallet, wallet_name, opener_wallet)
-                                            .then(result => res.status(200).json(result);)
+                                            .then(result => res.status(200).json(result));
                                         // res.status(result.status).json({message: result.message});
                                     })
                                     .catch(err => {console.log('err : ' + err);
