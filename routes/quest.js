@@ -101,7 +101,73 @@ router.post('/enter', (req, res) => {
                 res.status(err.status).json({message: err.message});
             })
     )
-})
+});
+
+router.post('/get_min', (req, res) => {
+    var room_wallet = req.body.room_wallet;
+    db.connectDB().then(
+        quest_info.get_one_quest(room_wallet)
+            .then(result => {
+                var len = Math.min.apply(null, result.members);
+                res.status(200).json(len);
+            })
+            .catch(err => {console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    )
+});
+
+router.post('/get_min', (req, res) => {
+    var room_wallet = req.body.room_wallet;
+    db.connectDB().then(
+        quest_info.get_one_quest(room_wallet)
+            .then(result => {
+                var len = Math.min.apply(null, result.members);
+                res.status(200).json(len);
+            })
+            .catch(err => {console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    )
+});
+
+router.post('/send_coin', (req, res) => {
+    const privateKey = req.body.privateKey;
+    const from = req.body.from;
+    const to = req.body.to;
+    const amount = req.body.amount;
+
+    axios.post('http://localhost:2442/api/v1/signedtx', {
+        privateKey : privateKey,
+        from : from,
+        to : to,
+        amount : amount,
+        fee : 0.0001
+    })
+        .then(response => {
+            res.status(200).json(response.data);
+        })
+        .catch(err => console.log(err))
+});
+
+router.post('/receive_coin', (req, res) => {
+    // const privateKey = req.body.privateKey;
+    // const from = req.body.from;
+    const to = req.body.to;
+    const amount = req.body.amount;
+
+    axios.post('http://localhost:2442/api/v1/signedtx', {
+        privateKey : real_config.hycon_config.ADMIN_PRIVATEKEY,
+        from : real_config.hycon_config.ADMIN_ADDRESS,
+        to : to,
+        amount : amount,
+        fee : 0.0001
+    })
+        .then(response => {
+            res.status(200).json(response.data);
+        })
+        .catch(err => console.log(err))
+});
 
 
 module.exports = router;
