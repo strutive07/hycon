@@ -17,20 +17,20 @@ const quest_info = require('../models/quest_info');
 const bcrypt = require('bcryptjs');
 const db = require('mongodb');
 
-exports.create_quest = (quest_id,request_person_id, title, context, purpose, location, difficulty, reward) =>
+exports.create_quest = (wallet_name, server_wallet, server_private_key, server_mnemonic, selected_person, members, random_extracted_seed) =>
     new Promise(((resolve, reject) => {
+        console.log('DEBUG', wallet_name, server_wallet, server_private_key, server_mnemonic, selected_person, members, random_extracted_seed)
         const new_quest_info = new quest_info({
-            quest_id : quest_id,
-            request_person_id : request_person_id,
-            title : title,
-            context : context,
-            purpose : purpose,
-            location : location,
-            difficulty : difficulty, //0 쉬움 1 어려움
-            reward : reward
+            wallet_name : wallet_name,
+            server_wallet : server_wallet,
+            server_private_key : server_private_key,
+            server_mnemonic : server_mnemonic,
+            selected_person : selected_person,
+            members : members,
+            random_extracted_seed : random_extracted_seed
         });
         new_quest_info.save().then(() => resolve({
-            status : 201,
+            status : 200,
             message : 'Sucessfully register quest'
         })).catch(err =>{
             if(err.code == 11000){
@@ -41,44 +41,30 @@ exports.create_quest = (quest_id,request_person_id, title, context, purpose, loc
         });
     }));
 
-
-
-
 exports.get_all_quest = () =>
     new Promise((resolve, reject) => {
         quest_info.find().then(results =>
             resolve(results)
         ).catch(err => {
-            
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
 
-exports.get_one_quest = id =>
+exports.get_one_quest = server_wallet =>
     new Promise((resolve, reject) => {
-        quest_info.find({quest_id : id}).then(results =>{
+        quest_info.find({server_wallet : server_wallet}).then(results =>{
             resolve(results[0]);
         }).catch(err => {
-            ////console.log("err : " + err);
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
 
-exports.people_num_change = (quest_id, dn) =>
+exports.push_user = (user_json, server_wallet) =>
     new Promise((resolve, reject) => {
-        quest_info.find({quest_id : quest_id}).then(results => {
-            var re_quest_info = results[0];
-            var people_num = results[0].people_num;
-            people_num = people_num + dn;
-            quest_info.update({quest_id : quest_id}, {$set : {people_num : people_num}}, function(err, output){
-                if(err){
-                    //console.log(err);
-                }
-                //console.log('output : ' + JSON.stringify(output));
-            });
-            return results[0];
-        }).then( results =>
-            resolve({ status: 200, message: 1})
-        ).catch(err => {
-            //console.log("err : " + err);
+        quest_info.find({server_wallet:server_wallet}).then(results =>{
+            var result = results[0];
+            result.members.push(user_json);
+            result.save();
+            return result;
+        }).then(result => resolve(results))
+            .catch(err => {
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
-

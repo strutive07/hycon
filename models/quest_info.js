@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
-var schema = require('../schemas/quest_info');
+var schema = require('../schemas/room');
 
-module.exports = mongoose.model('quest_info', schema);
+module.exports = mongoose.model('room', schema);

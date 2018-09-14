@@ -2,13 +2,14 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var roomSchema = new Schema({
-    auth_id : String,
-    point : Number,
-    first_login : Boolean,
-    created_at : String,
-    temp_password : String,
-    temp_password_time : String
-});
+    wallet_name : String,
+    server_wallet : String,
+    server_private_key : String,
+    server_mnemonic : String,
+    selected_person : String,
+    members : Array,
+    random_extracted_seed : Array,
+},{ usePushEach: true });
 
 
 module.exports = roomSchema;

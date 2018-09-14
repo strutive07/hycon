@@ -21,3 +21,19 @@ exports.LoginUser = (id, password) =>
             reject({ status: 500, message: 'Internal Server Error !' })
         );
     });
+
+exports.PushUser = (server_wallet, server_name, User_Wallet) =>
+    new Promise((resolve, reject) => {
+        user.find({wallet : User_Wallet}).then(results =>{
+            var result = results[0];
+            result.entered_wallet.push({
+                wallet_name : server_name,
+                server_wallet : server_wallet
+            });
+            result.save();
+            return result;
+        }).then(result => resolve(result))
+            .catch(err => {
+                console.log("err : " + err);
+                reject({ status: 500, message: 'Internal Server Error !' })
+            })});

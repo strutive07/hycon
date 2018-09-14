@@ -6,7 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var index = require('./routes/index');
-var users = require('./routes/users');
+// var users = require('./routes/users');
 
 var app = express();
 const router = express.Router();
@@ -26,13 +26,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 var login_register = require('./routes/login_register');
 var quest = require('./routes/quest');
-var older_quest = require('./routes/older_quest');
+// var older_quest = require('./routes/older_quest');
 
 app.use('/api/v1g1/user', login_register);
-app.use('/api/v1g1/quest',quest);
-app.use('/api/v1g1/senior',older_quest);
+app.use('/api/v1g1/room',quest);
+// app.use('/api/v1g1/senior',older_quest);
 app.use('/', index);
-app.use('/users', users);
+// app.use('/users', users);
 app.use('/apidoc', express.static('apidoc'));
 
 // catch 404 and forward to error handler

@@ -14,274 +14,80 @@ const profile = require('../functions/profile');
 const quest_complete_flow = require('../functions/quest_complete_flow');
 const password = require('../functions/password');
 const config = require('../config/config');
+const real_config = require('../config');
+const axios = require('axios');
 
 
 
-    router.get('/', (req, res) => res.end('I choose you! (Server)\nMade by ssu.software.17.Wonjun Jang'));
-
-    router.post('/authenticate', (req, res) => {
-        var id = req.body.id;
-        var password = req.body.password;
-
-        if (id && password) {
-            db.connectDB().then(login.LoginUser(id, password)
-                .then(result => {
-                    const token = jwt.sign(result, config.secret, {expiresIn: 144000});
-                    console.log('token : ' + token);
-                    res.status(result.status).json({id: result.message, token: token});
-                })
-                .catch(err => {
-                    res.status(err.status).json({message: err.message})
-                })
-            )
-        } else {
-            res.status(400).json({message: 'Invalid Request !'});
-        }
-    });
-
-    router.get('/authenticate', (req, res) => {
-        res.redirect('/');
-    });
+router.get('/', (req, res) => res.end('I choose you! asdfasdfasdf (Server)\nMade by ssu.software.17.Wonjun Jang'));
 
 
-    router.post('/register', (req, res) => {
-        const name = req.body.name;
-        var id = req.body.id;
-        const password = req.body.password;
-        const phone_number = req.body.phone_number;
-        console.log('name : ' + name);
-        console.log('id : ' + id);
-        console.log('password : ' + password);
-        console.log('phone_number : ' + phone_number);
-        if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
-            res.status(400).json({message: 'Invalid Request !'});
-        } else {
-
-            db.connectDB().then(register.RegisterUser(name, id, password, phone_number)
-                .then(result => {
-                    console.log('name->' + name);
-                    console.log('email->' + id);
-                    res.setHeader('Location', '/users' + id);
-                    res.status(result.status).json({message: result.message});
-                })
-                .catch(err => {
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-        }
-    });
-
-    // 해야할 일
-    // 퀘스트 리스트
-    // 선배쪽 퀘스트 받은사람 정보 보여주기
-    // 퀘스트 시작하기
-    // 퀘스트 1개 정보 + 의뢰자 정보 합쳐서 보내주기
-    // 랭킹
-    // 첫 로그인시 선배 정하기
-    // 활약의 발자취
-
-    router.post('/older_register', (req, res) => {
-        const name = req.body.name;
-        var id = req.body.id;
-        const password = req.body.password;
-        const phone_number = req.body.phone_number;
-        const quest_id = req.body.quest_id;
-        console.log("quest_id : "+ quest_id);
-        if (!name || !id || !password || !name.trim() || !id.trim() || !password.trim()) {
-            res.status(400).json({message: 'Invalid Request !'});
-        } else {
-
-            db.connectDB().then(register.register_elder_user(name, id, password, phone_number, quest_id)
-                .then(result => elder_user_quest_accept_list.register_user_quest_bool(id))
-                .then(result => {
-                    console.log('name->' + name);
-                    console.log('email->' + id);
-                    res.setHeader('Location', '/users' + id);
-                    res.status(result.status).json({message: result.message});
-                })
-                .catch(err => {
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-        }
-    });
-
-
-    router.get('/:id', (req, res) => {
-        if (checkToken(req)) {
-            db.connectDB().then(
-                profile.GetProfile(req.params.id)
-                    .then(result => {
-                        console.log('result : ' + result);
-                        res.json(result);
-                    })
-                    .catch(err => {console.log('err : ' + err);
-                        res.status(err.status).json({message: err.message});
-                    })
-            );
-
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.get('/users_test/:id', (req, res) => {
-        var id = req.params.id;
-        // if (checkToken(req)) {
-        db.connectDB().then(
-            profile.GetProfile(id)
-                .then(result => {
-                    console.log('result : ' + result);
-                    res.json(result);
-                })
-                .catch(err => {
-                    console.log('err : ' + err);
-                    res.status(err.status).json({message: err.message});
-                })
+router.post('/register', (req, res) => {
+    const name = req.body.name;
+    const wallet = req.body.wallet;
+    console.log('name : ' + name);
+    console.log('wallet : ' + wallet);
+    if (!name || !wallet || !name.trim() || !wallet.trim()) {
+        res.status(400).json({message: 'Invalid Request !'});
+    } else {
+        db.connectDB().then(register.RegisterUser(name, wallet)
+            .then(result => {
+                console.log('name->' + name);
+                console.log('email->' + wallet);
+                // res.setHeader('Location', '/users' + id);
+                res.status(result.status).json({message: result.message});
+            })
+            .catch(err => {
+                res.status(err.status).json({message: err.message});
+            })
         );
-    });
-
-    router.post('/changepassword/:id', (req, res) => {
-        if (checkToken(req)) {
-            const oldPassword = req.body.password;
-            const new_password = req.body.new_password;
-            const new_password_confirm = req.body.new_password_confirm;
-            const phone_number = req.body.phone_number;
-
-            if (!oldPassword || !new_password || !phone_number || !new_password_confirm || !oldPassword.trim() || !new_password.trim() || !phone_number.trim() || !new_password_confirm.trim()) {
-                res.status(400).json({message: '필수 입력 요소가 비어있습니다.'});
-            } else {
-                if(new_password === new_password_confirm){
-                    db.connectDB().then( password.ChangePassword(req.params.id, oldPassword, new_password, phone_number)
-                        .then(result => {
-                            res.status(result.status).json({message: result.message});
-                        })
-                        .catch(err => {
-                            res.status(err.status).json({message: err.message});
-                        })
-                    );
-                }else{
-                    res.status(402).json({message: '새로운 비밀번호의 입력값 2개가 일치하지 않습니다.'});
-                }
-            }
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.get('/questtable/:id', (req, res) => {
-        if (checkToken(req)) {
-            db.connectDB().then(
-                user_quest_bool.get_one_quest_bool(req.params.id)
-                    .then(result => {
-                        console.log('result : ' + result);
-                        res.status(200).json({result : result});
-                    })
-                    .catch(err => {console.log('err : ' + err);
-                        res.status(err.status).json({message: err.message});
-                    })
-            );
-
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.post('/:email/password', (req, res) => {
-        const email = req.params.email;
-        const token = req.body.token;
-        const newPassword = req.body.password;
-
-        if (!token || !newPassword || !token.trim() || !newPassword.trim()) {
-            password.ResetPasswordInit(email)
-                .then(result => res.status(result.status).json({message: result.message}))
-                .catch(err => res.status(err.status).json({message: err.message}));
-        } else {
-            password.ResetPasswordFinish(email, token, newPassword)
-                .then(result => res.status(result.status).json({message: result.message}))
-                .catch(err => res.status(err.status).json({message: err.message}));
-        }
-    });
-
-    router.post('/first_connection/:id/:older_id', (req, res) => {
-        if (checkToken(req)) {
-            const id = req.params.id;
-            const older_id = req.params.older_id;
-
-            if (!id || !older_id || !id.trim() || !older_id.trim()) {
-                res.status(400).json({message: 'Invalid Token! '});
-            } else {
-                db.connectDB().then(
-                    register.set_first_connection(id, older_id)
-                        .then(result =>
-                            res.status(result.status).json({message: result.message, user : result.user})
-                        )
-                        .catch(err =>
-                            res.status(err.status).json({message: err.message}))
-                );
-            }
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.get('/ranking/:id', (req, res) => {
-        console.log('ranking id : '+ req.params.id);
-        if (checkToken(req)) {
-            db.connectDB().then(
-                profile.get_ranking(req.params.id)
-                    .then(result =>
-                        res.status(200).json({top_ranking : result.top_ranking, my_ranking : result.my_ranking, my_ranking_info : result.my_ranking_info})
-                    ).catch(err => {console.log('err : ' + err);
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-    router.get('/older_ranking/:id', (req, res) => {
-        console.log('ranking id : '+ req.params.id);
-        if (checkToken(req)) {
-            db.connectDB().then(
-                profile.get_older_ranking(req.params.id)
-                    .then(result =>
-                        res.status(200).json({top_ranking : result.top_ranking, my_ranking : result.my_ranking, my_ranking_info : result.my_ranking_info})
-                    ).catch(err => {console.log('err : ' + err);
-                    res.status(err.status).json({message: err.message});
-                })
-            );
-        } else {
-            res.status(401).json({message: 'Invalid Token! '});
-        }
-    });
-
-
-
-    //========================================================================================================================
-
-
-    function checkToken(req){
-        const token = req.headers['x-access-token'];
-        if(token){
-            try{
-                var decoded = jwt.verify(token, config.secret);
-                if(decoded.message === req.params.id){
-                    console.log("hoho");
-                    return true;
-                }else{
-                    console.log("bobo");
-                    return false;
-                }
-
-            }catch(err){
-                return false;
-            }
-        }else{
-            return false;
-        }
     }
+});
+router.post('/generate_wallet', (req, res) => {
+    var server_wallet;
+    var server_private_key;
+    var server_mnemonic;
+
+    axios.post('http://localhost:2442/api/v1/wallet')
+        .then(response => {
+            server_wallet = response.data.address;
+            server_private_key = response.data.privateKey;
+            server_mnemonic = response.data.mnemonic;
+            axios.post('http://localhost:2442/api/v1/signedtx', {
+                privateKey : real_config.hycon_config.ADMIN_PRIVATEKEY,
+                from : real_config.hycon_config.ADMIN_ADDRESS,
+                to : server_wallet,
+                amount : 10,
+                fee : 0.0001
+            })
+                .then(response =>{
+                    console.log(response);
+                        res.status(200).json({
+                            server_wallet:server_wallet,
+                            server_private_key:server_private_key,
+                            server_mnemonic:server_mnemonic
+                        })
+                })
+                .catch(err => console.log(err))
+        })
+        .catch(err => console.log(err))
+});
+
+router.post('/wallet', (req, res) => {
+    console.log(req.body.wallet);
+    db.connectDB().then(
+
+        profile.GetProfile(req.body.wallet)
+            .then(result => {
+                axios.get('http://localhost:2442/api/v1/wallet/' + req.body.wallet + '/balance')
+                    .then(response => res.json({name : result.name, wallet : result.wallet, balance : response.data.balance}))
+                    .catch(err => console.log(err));
+            })
+            .catch(err => {console.log('err : ' + err);
+                res.status(err.status).json({message: err.message});
+            })
+    );
+});
 
 
 module.exports = router;
