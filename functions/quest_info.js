@@ -65,7 +65,7 @@ exports.push_user = (user_json, server_wallet) =>
             result.members.push(user_json);
             result.save();
             return result;
-        }).then(result => resolve(results))
+        }).then(result => resolve(result))
             .catch(err => {
             reject({ status: 500, message: 'Internal Server Error !' })
         })});
