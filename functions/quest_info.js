@@ -61,6 +61,7 @@ exports.push_user = (user_json, server_wallet) =>
     new Promise((resolve, reject) => {
         quest_info.find({server_wallet:server_wallet}).then(results =>{
             var result = results[0];
+            console.log('result', result)
             result.members.push(user_json);
             result.save();
             return result;
