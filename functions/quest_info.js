@@ -86,14 +86,17 @@ exports.get_random = (server_wallet) =>
                     random.splice(result.random_extracted_seed[i]-i,1);
                 }
                 var random_item = random[Math.floor(Math.random() * random.length)];
-                var random_item_index = result.members.indexOf(random_item);
+                var random_item_index = result.members.findIndex((item, i) => {
+                    return item.wallet === random_item.wallet
+                });
+
                 result.random_extracted_seed.push(random_item_index);
-                result.selected_person = random_item;
+                result.selected_person = random_item.wallet;
+                result.selected_person_name = random_item.name;
                 result.save();
-                return result.selected_person;
+                return {wallet : result.selected_person, name : result.selected_person_name, members : result.members};
             }else {
-                result.save();
-                return result.selected_person;
+                return {wallet : result.selected_person, name : result.selected_person_name, members : result.members};
             }
             return result;
         }).then(result => resolve(result))
@@ -109,6 +112,7 @@ exports.remove_random = (server_wallet) =>
                 reject({ status: 500, message: 'Internal Server Error !' })
             }else {
                 result.selected_person = "";
+                result.selected_person_name = "";
                 result.save();
                 return result;
             }

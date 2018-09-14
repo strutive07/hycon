@@ -7,6 +7,7 @@ var roomSchema = new Schema({
     server_private_key : String,
     server_mnemonic : String,
     selected_person : String,
+    selected_person_name : String,
     members : Array,
     random_extracted_seed : Array,
 },{ usePushEach: true });
