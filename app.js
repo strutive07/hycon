@@ -33,24 +33,24 @@ var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
 rule.second = new schedule.Range(0, 59, 2);
 
-var coin = parseFloat(fs.readFileSync('functions/coin', 'utf-8'));
-console.log(coin);
-var j = schedule.scheduleJob(rule, function(){
-  console.log(coin);
-  if(coin <= 19){
-    coin += Math.random() * 10;
-  }else{
-    var check = Math.random() - 0.5;
-    coin += check * 10;
-  }
-  fs.writeFile('functions/coin', coin, 'utf-8', e => {
-    if(e){
-      console.log(e);
-    }else{
-      console.log('시세 :', coin);
-    }
-  })
-});
+// var coin = parseFloat(fs.readFileSync('functions/coin', 'utf-8'));
+// console.log(coin);
+// var j = schedule.scheduleJob(rule, function(){
+//   console.log(coin);
+//   if(coin <= 19){
+//     coin += Math.random() * 10;
+//   }else{
+//     var check = Math.random() - 0.5;
+//     coin += check * 10;
+//   }
+//   fs.writeFile('functions/coin', coin, 'utf-8', e => {
+//     if(e){
+//       console.log(e);
+//     }else{
+//       console.log('시세 :', coin);
+//     }
+//   })
+// });
 
 
 
