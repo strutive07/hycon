@@ -121,3 +121,23 @@ exports.remove_random = (server_wallet) =>
             .catch(err => {
                 reject({ status: 500, message: 'Internal Server Error !' })
             })});
+
+
+exports.update_current_coin = server_wallet, user_wallet =>
+    new Promise((resolve, reject) => {
+        quest_info.find({server_wallet : server_wallet}).then(results =>{
+            var result = results[0];
+
+            for(var i =0; i<result.members.length; i++){
+                if(result.members[i].wallet === user_wallet){
+                    var coin = parseFloat(fs.readFileSync('./coin', 'utf-8'));
+                    result.members[i].coin = coin;
+                }
+            }
+            result.save();
+            return result;
+        })
+            .then(result => resolve(result))
+            .catch(err => {
+            reject({ status: 500, message: 'Internal Server Error !' })
+        })});

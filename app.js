@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var index = require('./routes/index');
 // var users = require('./routes/users');
+var fs = require('fs')
 
 var app = express();
 const router = express.Router();
@@ -27,6 +28,32 @@ app.use(express.static(path.join(__dirname, 'public')));
 var login_register = require('./routes/login_register');
 var quest = require('./routes/quest');
 // var older_quest = require('./routes/older_quest');
+
+var schedule = require('node-schedule');
+var rule = new schedule.RecurrenceRule();
+rule.second = new schedule.Range(0, 59, 2);
+
+var coin = parseFloat(fs.readFileSync('./coin', 'utf-8'));
+console.log(coin);
+var j = schedule.scheduleJob(rule, function(){
+  console.log(coin);
+  if(coin <= 19){
+    coin += Math.random() * 10;
+  }else{
+    var check = Math.random() - 0.5;
+    coin += check * 10;
+  }
+  fs.writeFile('./coin', coin, 'utf-8', e => {
+    if(e){
+      console.log(e);
+    }else{
+      console.log('시세 :', coin);
+    }
+  })
+});
+
+
+
 
 app.use('/api/v1g1/user', login_register);
 app.use('/api/v1g1/room',quest);

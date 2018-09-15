@@ -151,9 +151,18 @@ router.post('/send_coin', (req, res) => {
         fee : 0.0001
     })
         .then(response => {
-            res.status(200).json(response.data);
+            db.connectDB().then(
+                quest_info.update_current_coin(to, from)
+                    .then(result => res.status(200).json(result))
+                    .catch(err => {console.log('err : ' + err);
+                        res.status(err.status).json({message: err.message});
+                    })
+            )
+
         })
-        .catch(err => console.log(err))
+        .catch(err => {console.log('err : ' + err);
+            res.status(err.status).json({message: err.message});
+        })
 });
 
 router.post('/receive_coin', (req, res) => {
@@ -210,6 +219,11 @@ router.post('/remove_random', (req, res) => {
                 res.status(err.status).json({message: err.message});
             })
     )
+});
+
+router.get('/get_current_coin', (req, res) => {
+    var coin = parseFloat(fs.readFileSync('../coin', 'utf-8'));
+    res.status(200).json(coin);
 });
 
 
