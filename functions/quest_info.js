@@ -139,5 +139,5 @@ exports.update_current_coin = (server_wallet, user_wallet) =>
         })
             .then(result => resolve(result))
             .catch(err => {
-            reject({ status: 500, message: 'Internal Server Error !' })
+            reject({ status: 500, message: 'Internal Server Error !', err : err})
         })});
