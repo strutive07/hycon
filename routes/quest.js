@@ -71,8 +71,14 @@ router.get('/:wallet', (req, res)=>{
    db.connectDB().then(
        quest_info.get_one_quest(wallet)
            .then(result => {
-               console.log(result);
-               res.status(200).json(result);
+               axios.get('http://localhost:2442/api/v1/wallet/' + wallet + '/balance')
+                   .then(response => {
+                       res.status(200).json({result : result, balance : response.data.balance});
+                   })
+                   .catch(err => {console.log('err : ' + err);
+                       res.status(err.status).json({message: err.message});
+                   })
+
            })
            .catch(err => {console.log('err : ' + err);
                res.status(err.status).json({message: err.message});
