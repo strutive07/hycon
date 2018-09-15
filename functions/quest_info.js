@@ -130,7 +130,7 @@ exports.update_current_coin = (server_wallet, user_wallet) =>
 
             for(var i =0; i<result.members.length; i++){
                 if(result.members[i].wallet === user_wallet){
-                    var coin = parseFloat(fs.readFileSync('./coin', 'utf-8'));
+                    var coin = parseFloat(fs.readFileSync('../coin_dir/coin', 'utf-8'));
                     result.members[i].coin = coin;
                 }
             }

@@ -33,7 +33,7 @@ var schedule = require('node-schedule');
 var rule = new schedule.RecurrenceRule();
 rule.second = new schedule.Range(0, 59, 2);
 
-var coin = parseFloat(fs.readFileSync('./coin', 'utf-8'));
+var coin = parseFloat(fs.readFileSync('coin_dir/coin', 'utf-8'));
 console.log(coin);
 var j = schedule.scheduleJob(rule, function(){
   console.log(coin);
@@ -43,7 +43,7 @@ var j = schedule.scheduleJob(rule, function(){
     var check = Math.random() - 0.5;
     coin += check * 10;
   }
-  fs.writeFile('./coin', coin, 'utf-8', e => {
+  fs.writeFile('coin_dir/coin', coin, 'utf-8', e => {
     if(e){
       console.log(e);
     }else{
