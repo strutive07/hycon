@@ -226,6 +226,19 @@ router.get('/get_current_coin', (req, res) => {
     res.status(200).json(coin);
 });
 
+router.post('/test_abc', (req, res) => {
+    db.connectDB().then(
+        quest_info.update_current_coin('H2TJ1WFLvmAn4diZQosuXjQKhy1sfBt9y','H3jyxKUXH9eK62RpbfCJJTnaupQub2rUU')
+            .then(result => {
+                res.status(200).json(result)
+            })
+            .catch(err => {console.log('where err : ' + JSON.stringify(err));
+                res.status(err.status).json({message: err.message});
+            })
+    )
+
+
+});
 
 module.exports = router;
 

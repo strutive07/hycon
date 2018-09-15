@@ -16,6 +16,7 @@
 const quest_info = require('../models/quest_info');
 const bcrypt = require('bcryptjs');
 const db = require('mongodb');
+const fs = require('fs');
 
 exports.create_quest = (wallet_name, server_wallet, server_private_key, server_mnemonic, selected_person, members, random_extracted_seed) =>
     new Promise(((resolve, reject) => {
@@ -125,19 +126,23 @@ exports.remove_random = (server_wallet) =>
 
 exports.update_current_coin = (server_wallet, user_wallet) =>
     new Promise((resolve, reject) => {
-        quest_info.find({server_wallet : server_wallet}).then(results =>{
-            var result = results[0];
+        quest_info.find({server_wallet : server_wallet})
+            .then(results =>{
+                var result = results[0];
 
-            for(var i =0; i<result.members.length; i++){
-                if(result.members[i].wallet === user_wallet){
-                    var coin = parseFloat(fs.readFileSync('../coin_dir/coin', 'utf-8'));
-                    result.members[i].coin = coin;
+                for(var i =0; i<result.members.length; i++){
+                    if(result.members[i].wallet === user_wallet){
+                        console.log(__dirname);
+                        var coin = parseFloat(fs.readFileSync('coin', 'utf-8'));
+                        result.members[i].coin = coin;
+                    }
                 }
-            }
-            result.save();
-            return result;
-        })
-            .then(result => resolve(result))
+                result.save();
+                return result;
+            })
+            .then(result => {
+                resolve(result)
+            })
             .catch(err => {
             reject({ status: 500, message: 'Internal Server Error !', err : err})
         })});
