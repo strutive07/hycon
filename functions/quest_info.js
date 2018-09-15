@@ -146,3 +146,8 @@ exports.update_current_coin = (server_wallet, user_wallet) =>
             .catch(err => {
             reject({ status: 500, message: 'Internal Server Error !', err : err})
         })});
+
+exports.get_current_coin = () => {
+    var coin = parseFloat(fs.readFileSync('coin', 'utf-8'));
+    return coin;
+}

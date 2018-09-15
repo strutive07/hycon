@@ -221,8 +221,8 @@ router.post('/remove_random', (req, res) => {
     )
 });
 
-router.get('/get_current_coin', (req, res) => {
-    var coin = parseFloat(fs.readFileSync('coin', 'utf-8'));
+router.post('/get_current_coin', (req, res) => {
+    var coin = quest_info.get_current_coin();
     res.status(200).json(coin);
 });
 
