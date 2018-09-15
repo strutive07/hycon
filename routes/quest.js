@@ -154,13 +154,13 @@ router.post('/send_coin', (req, res) => {
             db.connectDB().then(
                 quest_info.update_current_coin(to, from)
                     .then(result => res.status(200).json(result))
-                    .catch(err => {console.log('err : ' + err);
+                    .catch(err => {console.log('where err : ' + JSON.stringify(err));
                         res.status(err.status).json({message: err.message});
                     })
             )
 
         })
-        .catch(err => {console.log('err : ' + err);
+        .catch(err => {console.log('here err : ' + JSON.stringify(err));
             res.status(err.status).json({message: err.message});
         })
 });
