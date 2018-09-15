@@ -222,7 +222,7 @@ router.post('/remove_random', (req, res) => {
 });
 
 router.get('/get_current_coin', (req, res) => {
-    var coin = parseFloat(fs.readFileSync('../coin', 'utf-8'));
+    var coin = parseFloat(fs.readFileSync('coin', 'utf-8'));
     res.status(200).json(coin);
 });
 
