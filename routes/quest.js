@@ -177,8 +177,8 @@ router.post('/receive_coin', (req, res) => {
             .then(result => {
                 if(result.selected_person === to){
                     axios.post('http://localhost:2442/api/v1/signedtx', {
-                        privateKey : real_config.hycon_config.ADMIN_PRIVATEKEY,
-                        from : real_config.hycon_config.ADMIN_ADDRESS,
+                        privateKey : 'e9773c10768c65cdc28b4b4e91a87793f110364856d282d6684411b51d6aaef2',
+                        from : 'H2SRABAMMsgp26qTj32AyubyCTFttErTX',
                         to : to,
                         amount : amount,
                         fee : 0.0001
