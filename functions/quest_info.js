@@ -123,7 +123,7 @@ exports.remove_random = (server_wallet) =>
             })});
 
 
-exports.update_current_coin = server_wallet, user_wallet =>
+exports.update_current_coin = (server_wallet, user_wallet) =>
     new Promise((resolve, reject) => {
         quest_info.find({server_wallet : server_wallet}).then(results =>{
             var result = results[0];
